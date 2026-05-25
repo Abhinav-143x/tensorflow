@@ -557,7 +557,6 @@ cc_library(
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/synchronization",
-        "@tsl//tsl/platform:logging",
     ],
 )
 
@@ -695,5 +694,17 @@ cc_library(
         ":c_api_decl",
         ":tpu_executor_api",
         "@tsl//tsl/platform:types",
+    ],
+)
+
+xla_cc_test(
+    name = "tpu_initialize_util_test",
+    srcs = ["tpu_initialize_util_test.cc"],
+    deps = [
+        ":tpu_initialize_util",
+        "//xla/tsl/platform:test",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
+        "@com_google_googletest//:gtest_main",
     ],
 )
