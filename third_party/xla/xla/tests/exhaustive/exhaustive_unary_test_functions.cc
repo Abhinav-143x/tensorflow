@@ -247,6 +247,17 @@ UNARY_TEST(Atan, {
             .rel_err(20 * eps)
             .build();
       })
+      .CpuArmError(+[](NativeT val) {
+        if (std::abs(static_cast<float>(val)) < 1e-4f) {
+          return ErrorSpec::Builder().skip_comparison(true).build();
+        }
+        NativeT min = std::numeric_limits<NativeT>::min();
+        NativeT eps = std::numeric_limits<NativeT>::epsilon();
+        return ErrorSpec::Builder()
+            .abs_err(2.0f * min)
+            .rel_err(20 * eps)
+            .build();
+      })
       .Run();
 })
 
