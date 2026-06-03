@@ -20,7 +20,7 @@ diff --git a/absl/BUILD.bazel b/absl/BUILD.bazel
 +config_setting(
 +    name = "config_use_dlls",
 +    flag_values = {
-+        ":use_dlls": "True",
++        ":use_dlls": "true",
 +    },
 +    visibility = [":__subpackages__"],
 +)
@@ -41,3 +41,175 @@ diff --git a/absl/copts/configure_copts.bzl b/absl/copts/configure_copts.bzl
  })
  
  ABSL_TEST_COPTS = select({
+
+diff --git a/absl/status/status.h b/absl/status/status.h
+--- a/absl/status/status.h
++++ b/absl/status/status.h
+@@ -438,7 +438,7 @@
+ // Returned Status objects may not be ignored. status_internal.h has a forward
+ // declaration of the form
+ // class ABSL_MUST_USE_RESULT Status;
+-class ABSL_ATTRIBUTE_TRIVIAL_ABI Status final {
++class ABSL_DLL ABSL_ATTRIBUTE_TRIVIAL_ABI Status final {
+  public:
+   // Constructors
+ 
+@@ -834,43 +834,43 @@
+ // These convenience functions create an `absl::Status` object with an error
+ // code as indicated by the associated function name, using the error message
+ // passed in `message`.
+-Status AbortedError(absl::string_view message,
++ABSL_DLL Status AbortedError(absl::string_view message,
+                     absl::SourceLocation loc = SourceLocation::current());
+-Status AlreadyExistsError(absl::string_view message,
++ABSL_DLL Status AlreadyExistsError(absl::string_view message,
+                           absl::SourceLocation loc = SourceLocation::current());
+-Status CancelledError(absl::string_view message,
++ABSL_DLL Status CancelledError(absl::string_view message,
+                       absl::SourceLocation loc = SourceLocation::current());
+-Status DataLossError(absl::string_view message,
++ABSL_DLL Status DataLossError(absl::string_view message,
+                      absl::SourceLocation loc = SourceLocation::current());
+-Status DeadlineExceededError(
++ABSL_DLL Status DeadlineExceededError(
+     absl::string_view message,
+     absl::SourceLocation loc = SourceLocation::current());
+-Status FailedPreconditionError(
++ABSL_DLL Status FailedPreconditionError(
+     absl::string_view message,
+     absl::SourceLocation loc = SourceLocation::current());
+-Status InternalError(absl::string_view message,
++ABSL_DLL Status InternalError(absl::string_view message,
+                      absl::SourceLocation loc = SourceLocation::current());
+-Status InvalidArgumentError(
++ABSL_DLL Status InvalidArgumentError(
+     absl::string_view message,
+     absl::SourceLocation loc = SourceLocation::current());
+-Status NotFoundError(absl::string_view message,
++ABSL_DLL Status NotFoundError(absl::string_view message,
+                      absl::SourceLocation loc = SourceLocation::current());
+-Status OutOfRangeError(absl::string_view message,
++ABSL_DLL Status OutOfRangeError(absl::string_view message,
+                        absl::SourceLocation loc = SourceLocation::current());
+-Status PermissionDeniedError(
++ABSL_DLL Status PermissionDeniedError(
+     absl::string_view message,
+     absl::SourceLocation loc = SourceLocation::current());
+-Status ResourceExhaustedError(
++ABSL_DLL Status ResourceExhaustedError(
+     absl::string_view message,
+     absl::SourceLocation loc = SourceLocation::current());
+-Status UnauthenticatedError(
++ABSL_DLL Status UnauthenticatedError(
+     absl::string_view message,
+     absl::SourceLocation loc = SourceLocation::current());
+-Status UnavailableError(absl::string_view message,
++ABSL_DLL Status UnavailableError(absl::string_view message,
+                         absl::SourceLocation loc = SourceLocation::current());
+-Status UnimplementedError(absl::string_view message,
++ABSL_DLL Status UnimplementedError(absl::string_view message,
+                           absl::SourceLocation loc = SourceLocation::current());
+-Status UnknownError(absl::string_view message,
++ABSL_DLL Status UnknownError(absl::string_view message,
+                     absl::SourceLocation loc = SourceLocation::current());
+ 
+ // ErrnoToStatusCode()
+@@ -878,13 +878,13 @@
+ // Returns the StatusCode for `error_number`, which should be an `errno` value.
+ // See https://en.cppreference.com/w/cpp/error/errno_macros and similar
+ // references.
+-absl::StatusCode ErrnoToStatusCode(int error_number);
++ABSL_DLL absl::StatusCode ErrnoToStatusCode(int error_number);
+ 
+ // ErrnoToStatus()
+ //
+ // Convenience function that creates a `absl::Status` using an `error_number`,
+ // which should be an `errno` value.
+-Status ErrnoToStatus(int error_number, absl::string_view message,
++ABSL_DLL Status ErrnoToStatus(int error_number, absl::string_view message,
+                      absl::SourceLocation loc = SourceLocation::current());
+ 
+ //------------------------------------------------------------------------------
+diff --git a/absl/base/throw_delegate.h b/absl/base/throw_delegate.h
+--- a/absl/base/throw_delegate.h
++++ b/absl/base/throw_delegate.h
+@@ -36,28 +36,28 @@
+ // both with and without exceptions and you need to conform to an interface
+ // that uses exceptions.
+ 
+-[[noreturn]] void ThrowStdLogicError(const std::string& what_arg);
+-[[noreturn]] void ThrowStdLogicError(const char* what_arg);
+-[[noreturn]] void ThrowStdInvalidArgument(const std::string& what_arg);
+-[[noreturn]] void ThrowStdInvalidArgument(const char* what_arg);
+-[[noreturn]] void ThrowStdDomainError(const std::string& what_arg);
+-[[noreturn]] void ThrowStdDomainError(const char* what_arg);
+-[[noreturn]] void ThrowStdLengthError(const std::string& what_arg);
+-[[noreturn]] void ThrowStdLengthError(const char* what_arg);
+-[[noreturn]] void ThrowStdOutOfRange(const std::string& what_arg);
+-[[noreturn]] void ThrowStdOutOfRange(const char* what_arg);
+-[[noreturn]] void ThrowStdRuntimeError(const std::string& what_arg);
+-[[noreturn]] void ThrowStdRuntimeError(const char* what_arg);
+-[[noreturn]] void ThrowStdRangeError(const std::string& what_arg);
+-[[noreturn]] void ThrowStdRangeError(const char* what_arg);
+-[[noreturn]] void ThrowStdOverflowError(const std::string& what_arg);
+-[[noreturn]] void ThrowStdOverflowError(const char* what_arg);
+-[[noreturn]] void ThrowStdUnderflowError(const std::string& what_arg);
+-[[noreturn]] void ThrowStdUnderflowError(const char* what_arg);
+-
+-[[noreturn]] void ThrowStdBadFunctionCall();
+-[[noreturn]] void ThrowStdBadAlloc();
+-[[noreturn]] void ThrowStdBadArrayNewLength();
++[[noreturn]] ABSL_DLL void ThrowStdLogicError(const std::string& what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdLogicError(const char* what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdInvalidArgument(const std::string& what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdInvalidArgument(const char* what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdDomainError(const std::string& what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdDomainError(const char* what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdLengthError(const std::string& what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdLengthError(const char* what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdOutOfRange(const std::string& what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdOutOfRange(const char* what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdRuntimeError(const std::string& what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdRuntimeError(const char* what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdRangeError(const std::string& what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdRangeError(const char* what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdOverflowError(const std::string& what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdOverflowError(const char* what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdUnderflowError(const std::string& what_arg);
++[[noreturn]] ABSL_DLL void ThrowStdUnderflowError(const char* what_arg);
++
++[[noreturn]] ABSL_DLL void ThrowStdBadFunctionCall();
++[[noreturn]] ABSL_DLL void ThrowStdBadAlloc();
++[[noreturn]] ABSL_DLL void ThrowStdBadArrayNewLength();
+ 
+ ABSL_NAMESPACE_END
+ }  // namespace absl
+diff --git a/absl/container/internal/raw_hash_set.h b/absl/container/internal/raw_hash_set.h
+--- a/absl/container/internal/raw_hash_set.h
++++ b/absl/container/internal/raw_hash_set.h
+@@ -1939,7 +1939,7 @@
+ // ClearBackingArray clears the backing array, either modifying it in place,
+ // or creating a new one based on the value of "reuse".
+ // REQUIRES: c.capacity > MaxSmallCapacity().
+-void ClearBackingArray(CommonFields& c, const PolicyFunctions& policy,
++ABSL_DLL void ClearBackingArray(CommonFields& c, const PolicyFunctions& policy,
+                        void* alloc, bool reuse);
+ 
+ // Type-erased versions of raw_hash_set::erase_meta_only_{small,large}.
+@@ -1982,13 +1982,13 @@
+ //           `target_group`.
+ // REQUIRES: `target_group` is a starting position for the group that has
+ //            at least one empty slot.
+-size_t PrepareInsertLarge(CommonFields& common, const PolicyFunctions& policy,
++ABSL_DLL size_t PrepareInsertLarge(CommonFields& common, const PolicyFunctions& policy,
+                           size_t hash, Group::NonIterableBitMaskType mask_empty,
+                           FindInfo target_group);
+ 
+ // Same as above, but with generations enabled, we may end up changing the seed,
+ // which means we need to be able to recompute the hash.
+-size_t PrepareInsertLargeGenerationsEnabled(
++ABSL_DLL size_t PrepareInsertLargeGenerationsEnabled(
+     CommonFields& common, const PolicyFunctions& policy, size_t hash,
+     Group::NonIterableBitMaskType mask_empty, FindInfo target_group,
+     absl::FunctionRef<size_t(size_t)> recompute_hash);
+
