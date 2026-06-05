@@ -71,6 +71,7 @@ tf_cc_test(
         "//tensorflow/lite/kernels:test_main",
         "//tensorflow/lite/kernels:test_util",
         "//tensorflow/lite/schema:schema_fbs",
+        "@com_google_googletest//:gtest",
         "@flatbuffers",
     ] + select({
         "//tensorflow:android": [
