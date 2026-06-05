@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-"""Tests for tf upgrader."""
+# Tests for tf upgrader.
 
 import shutil
 import tempfile

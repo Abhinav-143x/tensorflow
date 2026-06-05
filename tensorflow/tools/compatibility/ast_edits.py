@@ -24,6 +24,37 @@ import tempfile
 import traceback
 
 import pasta
+import numbers
+
+# Monkeypatch pasta to fix Python 3.14 issues with numbers in AST constants.
+try:
+  import pasta.base.annotate as pasta_annotate
+except ImportError:
+  pasta_annotate = None
+
+if pasta_annotate:
+  original_get_base_visitor = pasta_annotate.get_base_visitor
+
+  def patched_get_base_visitor(*args, **kwargs):
+    cls = original_get_base_visitor(*args, **kwargs)
+    original_visit_Constant = cls.visit_Constant
+
+    def visit_Constant(self, node):
+      if sys.version_info >= (3, 14) and isinstance(node.value, numbers.Number):
+        token_number_type = pasta_annotate.token_generator.TOKENS.NUMBER
+        self.attr(
+            node,
+            "content",
+            [lambda: self.tokens.next_of_type(token_number_type).src],
+            deps=("value",),
+            default=str(node.value))
+      else:
+        original_visit_Constant(self, node)
+
+    cls.visit_Constant = visit_Constant
+    return cls
+
+  pasta_annotate.get_base_visitor = patched_get_base_visitor
 
 # Some regular expressions we will need for parsing
 FIND_OPEN = re.compile(r"^\s*(\[).*$")
